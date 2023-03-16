@@ -8,6 +8,7 @@ import (
 func portrange() (int, int) {
 	var startPort int
 	var endPort int
+
 	fmt.Print("Enter startPort: ")
 	fmt.Scanln(&startPort)
 
@@ -16,7 +17,7 @@ func portrange() (int, int) {
 	return startPort, endPort
 }
 
-func main() {
+func portscan() {
 	var i int
 	var ports int
 
@@ -39,4 +40,8 @@ func main() {
 	fmt.Println(ports, "ports are open")
 	fmt.Println("====================================")
 	fmt.Println("====================================")
+}
+
+func main() {
+	portscan()
 }

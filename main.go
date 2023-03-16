@@ -5,10 +5,22 @@ import (
 	"net"
 )
 
+var startPort int
+var endPort int
+var i int
+var ports int
+
+func portrange() {
+	fmt.Print("Enter startPort: ")
+	fmt.Scanln(&startPort)
+
+	fmt.Print("Enter endPort: ")
+	fmt.Scanln(&endPort)
+}
+
 func main() {
-	var i uint
-	ports := 0
-	for i = 1; i < 100; i++ {
+	portrange()
+	for i = startPort; i < endPort; i++ {
 		addr := fmt.Sprintf("scanme.nmap.org:%d", i)
 		conn, err := net.Dial("tcp", addr)
 		if err == nil {

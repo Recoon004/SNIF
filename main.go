@@ -3,7 +3,13 @@ package main
 import (
 	"fmt"
 	"net"
+
+	"C:\school\infra\S2\APC\SNIF\log.yaml"
 )
+
+type log struct {
+	file string `yaml:"file"`
+}
 
 func portrange() (int, int) {
 	var startPort int

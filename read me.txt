@@ -1,0 +1,12 @@
+hey daar gebruiker
+------------------
+hey there user
+------------------
+NL
+
+als je dezen koden wil gebruiken om porten te scannen moet je siple weg in de code aan geven waar je wil scannen en hij logt het automaties naar de log.yaml dus zoorg dat die in de zelfde file staat.
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ENG
+
+if you want to use this code for port scanning please give in where you want to scan with in the code also it logs automaticly to the log.yaml file so make sure its with in the same file.
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

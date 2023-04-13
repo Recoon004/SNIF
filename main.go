@@ -2,13 +2,20 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net"
+	"os"
 
-	"C:\school\infra\S2\APC\SNIF\log.yaml"
+	"gopkg.in/yaml.v2"
 )
 
-type log struct {
-	file string `yaml:"file"`
+type Log struct {
+	OpenPorts   []int `yaml:"open_ports"`
+	ClosedPorts []int `yaml:"closed_ports"`
+}
+
+type Config struct {
+	File string `yaml:"file"`
 }
 
 func portrange() (int, int) {
@@ -23,31 +30,55 @@ func portrange() (int, int) {
 	return startPort, endPort
 }
 
-func portscan() {
+func portscan(cfg *Config) {
 	var i int
-	var ports int
+	var openPorts []int
+	var closedPorts []int
 
 	startPort, endPort := portrange()
 	for i = startPort; i < endPort; i++ {
 		addr := fmt.Sprintf("scanme.nmap.org:%d", i)
 		conn, err := net.Dial("tcp", addr)
 		if err == nil {
-			fmt.Println(i, "port is open")
+			log.Println(i, "port is open")
 			conn.Close()
-			ports = ports + 1
+			openPorts = append(openPorts, i)
 		} else {
-			fmt.Println(i, "port is closed")
+			log.Println(i, "port is closed")
+			closedPorts = append(closedPorts, i)
 		}
 	}
 
-	fmt.Println("====================================")
-	fmt.Println("====================================")
-	fmt.Println("Scan is done")
-	fmt.Println(ports, "ports are open")
-	fmt.Println("====================================")
-	fmt.Println("====================================")
+	log.Println("====================================")
+	log.Println("====================================")
+	log.Println("Scan is done")
+	log.Println(len(openPorts), "ports are open")
+	log.Println("====================================")
+	log.Println("====================================")
+
+	logData := Log{
+		OpenPorts:   openPorts,
+		ClosedPorts: closedPorts,
+	}
+
+	logFile, err := os.Create(cfg.File)
+	if err != nil {
+		log.Fatal("Failed to open log file: ", err)
+	}
+	defer logFile.Close()
+
+	encoder := yaml.NewEncoder(logFile)
+	err = encoder.Encode(logData)
+	if err != nil {
+		log.Fatal("Failed to write log data: ", err)
+	}
 }
 
 func main() {
-	portscan()
+	cfg := &Config{
+		File: "log.yaml",
+	}
+
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	portscan(cfg)
 }

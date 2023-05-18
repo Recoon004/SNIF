@@ -5,13 +5,16 @@ import (
 	"log"
 	"net"
 	"os"
+	"time"
 
 	"gopkg.in/yaml.v2"
 )
 
 type Log struct {
-	OpenPorts   []int `yaml:"open_ports"`
-	ClosedPorts []int `yaml:"closed_ports"`
+	ScanTime    time.Time `yaml:"scan_time"`
+	IPAddress   string    `yaml:"ip_address"`
+	OpenPorts   []int     `yaml:"open_ports"`
+	ClosedPorts []int     `yaml:"closed_ports"`
 }
 
 type Config struct {
@@ -30,14 +33,23 @@ func portrange() (int, int) {
 	return startPort, endPort
 }
 
+func enterIP() string {
+	var ip string
+	fmt.Print("Enter IP address: ")
+	fmt.Scanln(&ip)
+	return ip
+}
+
 func portscan(cfg *Config) {
 	var i int
 	var openPorts []int
 	var closedPorts []int
 
 	startPort, endPort := portrange()
+	ip := enterIP()
+
 	for i = startPort; i < endPort; i++ {
-		addr := fmt.Sprintf("scanme.nmap.org:%d", i)
+		addr := fmt.Sprintf("%s:%d", ip, i)
 		conn, err := net.Dial("tcp", addr)
 		if err == nil {
 			log.Println(i, "port is open")
@@ -56,7 +68,13 @@ func portscan(cfg *Config) {
 	log.Println("====================================")
 	log.Println("====================================")
 
+	writeLogToFile(cfg, ip, openPorts, closedPorts)
+}
+
+func writeLogToFile(cfg *Config, ip string, openPorts []int, closedPorts []int) {
 	logData := Log{
+		ScanTime:    time.Now(),
+		IPAddress:   ip,
 		OpenPorts:   openPorts,
 		ClosedPorts: closedPorts,
 	}
